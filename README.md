@@ -6,6 +6,8 @@ An open-source **agent skill + verification toolkit** that teaches AI coding
 agents (Claude Code, OpenAI Codex, Cursor, custom agents) how to change existing
 Unity projects *safely* — and gives them the instruments to prove it.
 
+[![Tests](https://github.com/ssrinfree-hash/unity-sentinel/actions/workflows/tests.yml/badge.svg)](https://github.com/ssrinfree-hash/unity-sentinel/actions/workflows/tests.yml)
+[![Lint and structure](https://github.com/ssrinfree-hash/unity-sentinel/actions/workflows/lint.yml/badge.svg)](https://github.com/ssrinfree-hash/unity-sentinel/actions/workflows/lint.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-3776AB.svg)](pyproject.toml)
 
@@ -168,6 +170,10 @@ The suite covers path traversal, symlink escapes, dry-run immutability, hash
 locking, backup/journal integrity, revert safety, secret redaction, Unicode paths,
 CLI exit codes and the full scan → plan → apply → verify → report cycle.
 
+CI runs the same suite on Ubuntu, macOS and Windows with Python 3.10 and 3.12,
+plus the npm wrapper smoke test, asmdef validation and a repository-wide secret
+scan.
+
 ## Limitations (read before trusting a green status)
 
 * Not a Unity Editor, compiler or test framework. It does not execute gameplay
@@ -185,6 +191,9 @@ CLI exit codes and the full scan → plan → apply → verify → report cycle.
   [`docs/unity-integration.md`](docs/unity-integration.md).
 * An empty finding list means *no known issue was detected* — not proof of
   correctness.
+
+The full acceptance matrix, including what was **not** verified, is in
+[`docs/release-readiness.md`](docs/release-readiness.md).
 
 ## Security
 
