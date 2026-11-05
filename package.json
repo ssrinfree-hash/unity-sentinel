@@ -1,0 +1,53 @@
+{
+  "name": "unity-sentinel",
+  "version": "1.0.0",
+  "description": "UNITY SENTINEL — Your AI Unity Engineering Guardian. Agent skill plus a safe, testable verification toolkit for Unity projects.",
+  "keywords": [
+    "unity",
+    "unity3d",
+    "ai-agent",
+    "claude-code",
+    "codex",
+    "cursor",
+    "static-analysis",
+    "game-development",
+    "meta-files",
+    "safe-changes"
+  ],
+  "license": "MIT",
+  "type": "commonjs",
+  "bin": {
+    "unity-sentinel": "npm/bin/cli.js",
+    "sentinel": "npm/bin/cli.js"
+  },
+  "main": "npm/lib/cli.js",
+  "files": [
+    "npm/",
+    "core/",
+    "scripts/",
+    "config/",
+    "agents/",
+    "benchmark/",
+    "docs/",
+    "SKILL.md",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "sentinel": "node npm/bin/cli.js",
+    "test:python": "python3 -m unittest discover -s tests -t .",
+    "test:node": "node npm/test/smoke.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ssrinfree-hash/unity-sentinel.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ssrinfree-hash/unity-sentinel/issues"
+  },
+  "homepage": "https://github.com/ssrinfree-hash/unity-sentinel#readme"
+}

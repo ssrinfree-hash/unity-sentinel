@@ -1,0 +1,58 @@
+{
+  "scan": {
+    "exclude_directories": [
+      "Library",
+      "Temp",
+      "Obj",
+      "Logs",
+      "Builds",
+      "Build",
+      "UserSettings",
+      "MemoryCaptures",
+      "Recordings",
+      ".git",
+      ".svn",
+      ".hg",
+      ".vs",
+      ".idea",
+      ".vscode",
+      "node_modules"
+    ],
+    "max_file_size_bytes": 8388608,
+    "max_files": 200000,
+    "max_depth": 40,
+    "follow_symlinks": false
+  },
+  "meta": {
+    "ignore_root_level_meta": true,
+    "treat_orphan_meta_as_warning": true
+  },
+  "references": {
+    "scan_extensions": [
+      ".unity",
+      ".prefab",
+      ".asset",
+      ".mat",
+      ".anim",
+      ".controller",
+      ".overrideController",
+      ".mask",
+      ".physicMaterial",
+      ".preset"
+    ],
+    "max_file_size_bytes": 16777216
+  },
+  "safety": {
+    "require_confirmation_for_apply": true,
+    "backup_dir": ".sentinel/backups",
+    "journal_path": ".sentinel/journal.jsonl",
+    "protected_paths": ["ProjectSettings", "Packages"]
+  },
+  "report": {
+    "omit_absolute_paths": true,
+    "max_evidence_length": 200
+  },
+  "performance": {
+    "hot_methods": ["Update", "FixedUpdate", "LateUpdate", "OnGUI"]
+  }
+}

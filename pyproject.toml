@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "unity-sentinel"
+version = "1.0.0"
+description = "UNITY SENTINEL — Your AI Unity Engineering Guardian. Safe, verifiable tooling for AI agents working with Unity projects."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "UNITY SENTINEL contributors" }]
+keywords = ["unity", "unity3d", "ai-agents", "static-analysis", "game-development", "claude-code", "codex", "cursor"]
+dependencies = []
+
+[project.optional-dependencies]
+dev = []
+
+[project.scripts]
+unity-sentinel = "scripts.sentinel:main"
+
+[project.urls]
+Homepage = "https://github.com/ssrinfree-hash/unity-sentinel"
+Issues = "https://github.com/ssrinfree-hash/unity-sentinel/issues"
+
+[tool.setuptools]
+packages = ["core", "scripts"]
+include-package-data = true
+
+[tool.setuptools.package-data]
+core = ["py.typed"]

@@ -1,0 +1,9 @@
+# UNITY SENTINEL has NO runtime dependencies: the Python toolkit uses only the
+# standard library. This file is intentionally empty of runtime requirements and
+# lists optional developer tooling only.
+
+# Optional: faster test runner (the suite also runs with `python3 -m unittest`)
+# pytest>=8.0
+
+# Optional: linting (CI runs compileall + a structural check without extra deps)
+# ruff>=0.6

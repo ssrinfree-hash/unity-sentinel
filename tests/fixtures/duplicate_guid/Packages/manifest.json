@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "com.unity.render-pipelines.universal": "14.0.9",
+    "com.unity.test-framework": "1.1.33",
+    "com.unity.ide.rider": "3.0.27",
+    "com.unity.ugui": "1.0.0",
+    "com.unity.modules.animation": "1.0.0",
+    "com.unity.modules.physics": "1.0.0"
+  }
+}

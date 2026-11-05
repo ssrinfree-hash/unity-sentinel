@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Node
+node_modules/
+npm-debug.log*
+package-lock.json
+
+# UNITY SENTINEL runtime artefacts (inside a target project)
+.sentinel/backups/
+.sentinel/journal.jsonl
+.sentinel/report.json
+.sentinel/report.md
+.sentinel/verify.json
+.sentinel/verify.md
+.sentinel/plan.json
+
+# Unity generated folders (when testing against a real project)
+Library/
+Temp/
+Obj/
+Logs/
+UserSettings/
+Builds/
+*.csproj
+*.sln
+*.user
