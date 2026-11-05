@@ -39,9 +39,11 @@ def load_assembly_definitions(root: Path) -> tuple[dict[str, dict], list[Finding
     definitions: dict[str, dict] = {}
     findings: list[Finding] = []
     for asmdef_path in sorted(root.rglob("*.asmdef")):
-        if any(part in {"Library", "Temp", "Obj", "Logs", "Builds"} for part in asmdef_path.parts):
-            continue
         rel = asmdef_path.relative_to(root).as_posix()
+        # Only paths *inside* the project are filtered: the project itself may
+        # legitimately live under a folder called "Temp" (Windows temp dirs).
+        if any(part in {"Library", "Temp", "Obj", "Logs", "Builds"} for part in rel.split("/")[:-1]):
+            continue
         try:
             data = json.loads(asmdef_path.read_text(encoding="utf-8"))
         except (OSError, json.JSONDecodeError) as exc:

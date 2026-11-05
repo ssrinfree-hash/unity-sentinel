@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 import tempfile
 import unittest
 from pathlib import Path
@@ -35,6 +36,15 @@ class AssemblyGraphTests(unittest.TestCase):
             definitions, findings = load_assembly_definitions(root)
             self.assertEqual(definitions, {})
             self.assertEqual(findings[0].code, "ASMDEF_INVALID")
+
+    def test_project_inside_a_temp_named_folder_is_not_skipped(self) -> None:
+        """Regression: Windows temp dirs live under ...\Temp, so the generated-
+        directory filter must look at paths relative to the project only."""
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "Temp" / "UnityProject"
+            shutil.copytree(FIXTURES / "valid_project", root)
+            definitions, _ = load_assembly_definitions(root)
+            self.assertIn("FixtureGame", definitions)
 
     def test_duplicate_assembly_names(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
