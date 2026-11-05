@@ -6,6 +6,18 @@ and `update`.
 
 Exit codes: **0** pass · **1** fail · **2** not verified · **3** fatal error.
 
+## Shortcut scripts
+
+For CI and agent prompts there are single-purpose entry points that wrap the
+sub-commands:
+
+| Script | Equivalent |
+| --- | --- |
+| `python3 scripts/scan_project.py --project .` | `sentinel.py scan` |
+| `python3 scripts/validate_meta.py --project .` | `sentinel.py meta-check` |
+| `python3 scripts/check_references.py --project .` | `sentinel.py references` |
+| `python3 scripts/generate_report.py --input report.json` | `sentinel.py report` |
+
 ## Global options
 
 | Option | Applies to | Meaning |
