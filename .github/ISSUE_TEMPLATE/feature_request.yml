@@ -1,0 +1,47 @@
+name: Feature request
+description: Suggest a new check, adapter or improvement
+title: "[feature] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        UNITY SENTINEL only ships checks that can be **verified**. Please describe
+        how the new behaviour could be tested on a synthetic fixture.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What can an agent not detect or do safely today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Command, finding code, severity, confidence, expected output.
+    validations:
+      required: true
+  - type: dropdown
+    id: layer
+    attributes:
+      label: Which layer does it belong to?
+      options:
+        - Python file-based analysis
+        - Unity Editor module (requires Unity API)
+        - Agent adapter / skill wording
+        - npm installer / CLI UX
+        - Documentation
+    validations:
+      required: true
+  - type: textarea
+    id: verification
+    attributes:
+      label: How could it be verified?
+      description: Describe the fixture and the expected finding(s). False positives matter.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered

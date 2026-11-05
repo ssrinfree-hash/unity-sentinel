@@ -1,0 +1,12 @@
+{
+  "summary": "Guard EnemyBehaviour against a missing patrol target",
+  "changes": [
+    {
+      "path": "Assets/Scripts/EnemyBehaviour.cs",
+      "search": "public Transform target;",
+      "replacement": "public Transform target;\n\n        private void Awake()\n        {\n            if (target == null)\n            {\n                Debug.LogWarning(\"EnemyBehaviour has no target assigned.\");\n            }\n        }",
+      "reason": "Prevents a NullReferenceException when the patrol target is not assigned in the prefab.",
+      "allow_protected": false
+    }
+  ]
+}

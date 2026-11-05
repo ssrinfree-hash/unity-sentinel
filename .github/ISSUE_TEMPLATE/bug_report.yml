@@ -1,0 +1,53 @@
+name: Bug report
+description: Something in UNITY SENTINEL behaves incorrectly
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. **Do not paste real project code, credentials or tokens.**
+        Redact absolute paths if needed.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Commands, in order.
+      render: bash
+      placeholder: |
+        python scripts/sentinel.py doctor
+        python scripts/sentinel.py scan --project tests/fixtures/broken_meta --json
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: UNITY SENTINEL version
+      placeholder: "1.0.0 (python scripts/sentinel.py version)"
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: "Ubuntu 24.04, Python 3.12.3, Node 20, Unity 2022.3.20f1 (or 'no Unity')"
+    validations:
+      required: true
+  - type: textarea
+    id: report
+    attributes:
+      label: Relevant report excerpt
+      description: Paste a redacted part of report.json / verify.json / journal.jsonl.
+      render: json
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional context
+      description: Minimal fixture, stack traces, anything else useful.

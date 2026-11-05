@@ -1,0 +1,114 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  python:
+    name: Python ${{ matrix.python }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python: ["3.10", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Rebuild synthetic fixtures
+        run: python tests/fixtures/_build_fixtures.py
+
+      - name: Unit and integration tests
+        run: python -m unittest discover -s tests -t . -v
+
+      - name: CLI doctor
+        run: python scripts/sentinel.py doctor
+
+      - name: Scan the valid fixture (read-only)
+        run: python scripts/sentinel.py scan --project tests/fixtures/valid_project --out .sentinel-ci
+
+      - name: Broken fixtures must fail the scan
+        shell: bash
+        run: |
+          set +e
+          python scripts/sentinel.py scan --project tests/fixtures/broken_meta --out .sentinel-ci/broken
+          code=$?
+          echo "exit code: $code"
+          test "$code" -eq 1
+
+      - name: Benchmark
+        run: python benchmark/run_benchmark.py
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sentinel-reports-${{ matrix.os }}-${{ matrix.python }}
+          path: |
+            .sentinel-ci/
+            benchmark/results/
+          if-no-files-found: ignore
+
+  node:
+    name: npm wrapper
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Wrapper smoke test
+        run: node npm/test/smoke.test.js
+
+      - name: CLI help through the wrapper
+        run: node npm/bin/cli.js --help
+
+  unity-csharp:
+    name: C# static checks (no Unity available)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate asmdef files are valid JSON
+        run: |
+          python - <<'PY'
+          import json, pathlib, sys
+          files = sorted(pathlib.Path('unity').rglob('*.asmdef'))
+          assert files, 'no asmdef files found'
+          for path in files:
+              json.loads(path.read_text(encoding='utf-8'))
+              print('ok', path)
+          PY
+
+      - name: Editor-only assemblies
+        run: |
+          python - <<'PY'
+          import json, pathlib, sys
+          for path in sorted(pathlib.Path('unity').rglob('*.asmdef')):
+              data = json.loads(path.read_text(encoding='utf-8'))
+              platforms = data.get('includePlatforms', [])
+              if platforms != ['Editor']:
+                  sys.exit(f'{path}: includePlatforms must be ["Editor"], got {platforms}')
+              print('ok', path, platforms)
+          PY
+
+      - name: No scene/prefab saving in Editor code
+        run: |
+          if grep -rnE "EditorSceneManager\.SaveScene|PrefabUtility\.SaveAsPrefabAsset\(.*true\)|AssetDatabase\.SaveAssets" unity/Editor; then
+            echo "Editor code must never save scenes/prefabs automatically" >&2
+            exit 1
+          fi
+          echo "no automatic saves found"

@@ -1,0 +1,140 @@
+{
+  "meta": {
+    "tool": "unity-sentinel",
+    "version": "1.0.0",
+    "schema_version": "1.0",
+    "mode": "scan",
+    "generated_at": "2026-11-05T23:32:51.139984+00:00",
+    "duration_ms": 7,
+    "project_root": "<project>",
+    "unity_version": "2022.3.20f1",
+    "environment": {
+      "python_version": "3.13.16",
+      "python_executable": "/usr/local/bin/python3",
+      "git_available": true,
+      "git_version": "git version 2.47.3",
+      "dotnet_available": false,
+      "dotnet_version": null,
+      "unity_editor_available": false,
+      "unity_editor_path": null,
+      "unity_editor_version": null,
+      "os_name": "Linux 6.1.189+",
+      "notes": [
+        "Unity Editor not detected. Editor-side scene/prefab validation and Unity tests were NOT executed; set UNITY_EDITOR_PATH or pass --unity to enable them."
+      ]
+    }
+  },
+  "status": "PASS WITH WARNINGS",
+  "summary": {
+    "info": 0,
+    "warning": 1,
+    "error": 0,
+    "critical": 0,
+    "total": 1
+  },
+  "findings": [
+    {
+      "code": "REF_UNKNOWN_GUID",
+      "message": "GUID reference is not present in the project .meta database; it may be a package/engine asset or a genuinely missing reference.",
+      "severity": "warning",
+      "path": "Assets/Scenes/BrokenRef.unity",
+      "line": 26,
+      "confidence": "medium",
+      "evidence": "guid aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "recommendation": "Confirm in the Unity Editor (Sentinel > Scan Project) whether the reference is Missing; do not edit GUIDs by hand.",
+      "category": "references"
+    }
+  ],
+  "checks": [
+    {
+      "id": "scan.project",
+      "title": "Project scan (Assets/Packages/ProjectSettings)",
+      "result": "pass",
+      "details": "20 files, 2 C# scripts, 2 scenes, 1 prefabs, 9 meta files",
+      "requires": null
+    },
+    {
+      "id": "detect.unity_version",
+      "title": "Unity version detection",
+      "result": "pass",
+      "details": "Unity 2022.3.20f1",
+      "requires": null
+    },
+    {
+      "id": "detect.render_pipeline",
+      "title": "Render pipeline detection",
+      "result": "pass",
+      "details": "URP (high confidence)",
+      "requires": null
+    },
+    {
+      "id": "meta.integrity",
+      "title": "Meta file integrity",
+      "result": "pass",
+      "details": "0 finding(s) across 9 meta files",
+      "requires": null
+    },
+    {
+      "id": "references.guid",
+      "title": "GUID reference scan",
+      "result": "warn",
+      "details": "3 asset(s) scanned, 5 reference(s), 1 unknown GUID(s)",
+      "requires": null
+    },
+    {
+      "id": "dependencies.assemblies",
+      "title": "Assembly dependency graph",
+      "result": "pass",
+      "details": "1 asmdef, 0 finding(s)",
+      "requires": null
+    },
+    {
+      "id": "scenes.structure",
+      "title": "Scene structural validation (file level)",
+      "result": "pass",
+      "details": "2 scene(s) checked",
+      "requires": null
+    },
+    {
+      "id": "prefabs.structure",
+      "title": "Prefab structural validation (file level)",
+      "result": "pass",
+      "details": "1 prefab(s) checked",
+      "requires": null
+    },
+    {
+      "id": "unity.editor_checks",
+      "title": "Unity Editor-side validation",
+      "result": "skipped",
+      "details": "Requires a Unity Editor installation (Editor module / batchmode).",
+      "requires": "unity-editor"
+    },
+    {
+      "id": "unity.tests",
+      "title": "Unity EditMode/PlayMode tests",
+      "result": "skipped",
+      "details": "Requires a Unity Editor installation.",
+      "requires": "unity-editor"
+    },
+    {
+      "id": "performance.heuristics",
+      "title": "Performance heuristics (not profiling)",
+      "result": "pass",
+      "details": "0 heuristic observation(s)",
+      "requires": null
+    }
+  ],
+  "changed_files": [],
+  "skipped_checks": [],
+  "limitations": [
+    "Only text-serialised assets are scanned; binary assets and package assets are not covered, and unknown GUIDs may belong to packages.",
+    "File-level scene/prefab checks cannot resolve serialised references or prefab overrides; use the Unity Editor module for authoritative validation.",
+    "Unity EditMode/PlayMode tests were not executed (Unity Editor unavailable).",
+    "Performance findings are heuristics based on code patterns; they are not profiler measurements.",
+    "Project is not a Git repository (or git is unavailable); file hashes were used instead."
+  ],
+  "recommendations": [
+    "Run Sentinel > Scan Project inside the Unity Editor to confirm whether the references are actually Missing."
+  ],
+  "data_kind": "SYNTHETIC DEMO DATA — generated from tests/fixtures/missing_reference"
+}

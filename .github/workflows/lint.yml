@@ -1,0 +1,158 @@
+name: Lint and structure
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Byte-compile everything
+        run: python -m compileall -q core scripts tests benchmark
+
+      - name: Required structure
+        run: |
+          python - <<'PY'
+          import pathlib, sys
+
+          required = [
+              "SKILL.md", "README.md", "LICENSE", "CHANGELOG.md", "CONTRIBUTING.md",
+              "CODE_OF_CONDUCT.md", "SECURITY.md", ".gitignore", "pyproject.toml",
+              "requirements-dev.txt", "config/default.json",
+              "agents/codex/README.md", "agents/codex/instructions.md",
+              "agents/claude/README.md", "agents/claude/instructions.md",
+              "agents/cursor/README.md", "agents/cursor/instructions.md",
+              "agents/generic/README.md", "agents/generic/instructions.md",
+              "core/models.py", "core/paths.py", "core/project_detector.py",
+              "core/project_scanner.py", "core/dependency_analyzer.py",
+              "core/meta_validator.py", "core/reference_analyzer.py",
+              "core/scene_validator.py", "core/prefab_validator.py",
+              "core/regression_engine.py", "core/performance_inspector.py",
+              "core/report_generator.py", "core/safe_operations.py",
+              "scripts/sentinel.py",
+              "unity/Editor/UnitySentinel.Editor.asmdef",
+              "unity/Editor/SentinelMenu.cs",
+              "unity/Editor/SentinelProjectInfo.cs",
+              "unity/Editor/SentinelSceneValidator.cs",
+              "unity/Editor/SentinelPrefabValidator.cs",
+              "unity/Editor/SentinelTestRunner.cs",
+              "unity/Tests/Editor/UnitySentinel.Tests.asmdef",
+              "unity/Tests/Editor/SentinelValidatorTests.cs",
+              "docs/installation.md", "docs/architecture.md", "docs/safety.md",
+              "docs/commands.md", "docs/unity-integration.md",
+              "docs/agent-compatibility.md", "docs/troubleshooting.md",
+              "docs/benchmark.md",
+              "benchmark/run_benchmark.py",
+              "benchmark/ground_truth/ground_truth.json",
+              ".github/workflows/tests.yml", ".github/workflows/lint.yml",
+              ".github/ISSUE_TEMPLATE/bug_report.yml",
+              ".github/ISSUE_TEMPLATE/feature_request.yml",
+              ".github/PULL_REQUEST_TEMPLATE.md",
+          ]
+          missing = [p for p in required if not pathlib.Path(p).exists()]
+          if missing:
+              sys.exit("Missing required files:\n" + "\n".join(missing))
+          print(f"structure ok ({len(required)} required files)")
+          PY
+
+      - name: No empty placeholder modules
+        run: |
+          python - <<'PY'
+          import pathlib, sys
+          bad = []
+          for path in pathlib.Path("core").glob("*.py"):
+              if path.name == "__init__.py":
+                  continue
+              text = path.read_text(encoding="utf-8")
+              if len(text.strip()) < 200:
+                  bad.append(str(path))
+          if bad:
+              sys.exit("Suspiciously small core modules: " + ", ".join(bad))
+          print("no placeholder modules")
+          PY
+
+      - name: No committed secrets
+        run: |
+          python - <<'PY'
+          import pathlib, re, sys
+          patterns = [
+              re.compile(r"gh[pousr]_[A-Za-z0-9]{20,}"),
+              re.compile(r"github_pat_[A-Za-z0-9_]{20,}"),
+              re.compile(r"AKIA[0-9A-Z]{16}"),
+              re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----"),
+          ]
+          skip_dirs = {".git", "node_modules", "__pycache__"}
+          hits = []
+          for path in pathlib.Path(".").rglob("*"):
+              if not path.is_file() or any(part in skip_dirs for part in path.parts):
+                  continue
+              if path.suffix in {".png", ".jpg", ".ico"}:
+                  continue
+              try:
+                  text = path.read_text(encoding="utf-8", errors="ignore")
+              except OSError:
+                  continue
+              for pattern in patterns:
+                  for match in pattern.finditer(text):
+                      hits.append(f"{path}: {match.group(0)[:12]}...")
+          if hits:
+              sys.exit("Potential secrets found:\n" + "\n".join(hits))
+          print("no secrets detected")
+          PY
+
+      - name: No trailing whitespace in Python sources
+        run: |
+          python - <<'PY'
+          import pathlib, sys
+          bad = []
+          for pattern in ("core/*.py", "scripts/*.py", "tests/**/*.py", "benchmark/*.py"):
+              for path in pathlib.Path(".").glob(pattern):
+                  for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+                      if line != line.rstrip():
+                          bad.append(f"{path}:{number}")
+          if bad:
+              sys.exit("Trailing whitespace:\n" + "\n".join(bad[:20]))
+          print("whitespace ok")
+          PY
+
+      - name: CLI help for every command
+        run: |
+          set -e
+          python scripts/sentinel.py --help > /dev/null
+          for cmd in scan plan apply verify report meta-check references revert doctor benchmark version; do
+            python scripts/sentinel.py "$cmd" --help > /dev/null
+            echo "ok: $cmd --help"
+          done
+
+      - name: Markdown links resolve
+        run: |
+          python - <<'PY'
+          import pathlib, re, sys
+          link = re.compile(r"\[[^\]]+\]\((?!https?://|#|mailto:)([^)]+)\)")
+          missing = []
+          for path in pathlib.Path(".").rglob("*.md"):
+              if any(part in {".git", "node_modules", ".sentinel"} for part in path.parts):
+                  continue
+              for target in link.findall(path.read_text(encoding="utf-8")):
+                  clean = target.split("#")[0].strip()
+                  if not clean:
+                      continue
+                  resolved = (path.parent / clean).resolve()
+                  if not resolved.exists():
+                      missing.append(f"{path}: {target}")
+          if missing:
+              sys.exit("Broken relative links:\n" + "\n".join(missing))
+          print("markdown links ok")
+          PY
